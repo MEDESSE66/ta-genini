@@ -16,6 +16,7 @@ export interface Note {
   linkedNoteIds: string[];
   status: NoteStatus;
   progress: number; // 0 to 100
+  examples: string[];
 }
 
 export interface Workspace {
@@ -80,6 +81,7 @@ export const useStore = create<AppState>()(
             linkedNoteIds: [],
             status: 'raw',
             progress: 0,
+            examples: [],
           },
           ...state.notes,
         ],
