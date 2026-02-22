@@ -2,6 +2,8 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { v4 as uuidv4 } from 'uuid';
 
+export type NoteStatus = 'raw' | 'incubating' | 'refined' | 'completed';
+
 export interface Note {
   id: string;
   title: string;
@@ -12,6 +14,8 @@ export interface Note {
   updatedAt: string;
   isArchived: boolean;
   linkedNoteIds: string[];
+  status: NoteStatus;
+  progress: number; // 0 to 100
 }
 
 export interface Workspace {
@@ -35,7 +39,7 @@ interface AppState {
   archiveNote: (id: string) => void;
   deleteNote: (id: string) => void;
   
-  // AI Linking
+  // Linking
   linkNotes: (sourceId: string, targetId: string) => void;
 }
 
@@ -74,6 +78,8 @@ export const useStore = create<AppState>()(
             updatedAt: new Date().toISOString(),
             isArchived: false,
             linkedNoteIds: [],
+            status: 'raw',
+            progress: 0,
           },
           ...state.notes,
         ],
