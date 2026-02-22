@@ -61,6 +61,8 @@ export function NoteEditor({ noteId }: NoteEditorProps) {
             onChange={(e) => setTitle(e.target.value)}
             className="bg-transparent text-xl font-bold text-zinc-100 focus:outline-none w-full placeholder-zinc-600"
             placeholder="Titre de la note..."
+            spellCheck={true}
+            lang="fr"
             />
             <div className="flex items-center gap-2 mt-1">
                 <span className={clsx(
@@ -128,6 +130,8 @@ export function NoteEditor({ noteId }: NoteEditorProps) {
                     onChange={(e) => setContent(e.target.value)}
                     className="flex-1 bg-transparent p-8 resize-none focus:outline-none text-zinc-300 font-mono text-sm leading-relaxed"
                     placeholder="Commencez à écrire..."
+                    spellCheck={true}
+                    lang="fr"
                 />
             )}
             {viewMode === 'preview' && (
