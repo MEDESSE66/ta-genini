@@ -1,7 +1,7 @@
 import { useStore, NoteStatus } from '../store/useStore';
 import { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
-import { Save, Trash2, Archive, Share2, Activity, Map, FileText, CheckCircle } from 'lucide-react';
+import { Save, Trash2, Archive, Share2, Activity, Map, FileText, CheckCircle, Lightbulb } from 'lucide-react';
 import clsx from 'clsx';
 import { evaluateNote, calculateProgress } from '../utils/logicEngine';
 import { MindMap } from './MindMap';
@@ -41,6 +41,11 @@ export function NoteEditor({ noteId }: NoteEditorProps) {
 
   const handleStatusChange = (status: NoteStatus) => {
     if (noteId) updateNote(noteId, { status });
+  };
+
+  const insertExample = () => {
+    const exampleTemplate = `\n\n### 💡 Exemple Concret\n> Décrivez votre exemple ici...`;
+    setContent((prev) => prev + exampleTemplate);
   };
 
   if (!note) {
@@ -104,6 +109,14 @@ export function NoteEditor({ noteId }: NoteEditorProps) {
                 <Map size={16} />
             </button>
           </div>
+
+          <button
+            onClick={insertExample}
+            className="p-2 text-yellow-500 hover:text-yellow-400 hover:bg-yellow-900/20 rounded-md transition-colors"
+            title="Ajouter un Exemple"
+          >
+            <Lightbulb size={18} />
+          </button>
 
           <button
             onClick={() => archiveNote(note.id)}

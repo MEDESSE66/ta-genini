@@ -26,7 +26,18 @@ export function NoteList({ selectedNoteId, onSelectNote }: NoteListProps) {
 
   const handleCreateNote = () => {
     if (currentWorkspaceId) {
-      addNote(currentWorkspaceId, 'Nouvelle Note', '');
+      const exampleContent = `# Idée Principale
+
+## Contexte
+Décrivez le contexte ici...
+
+## Points Clés
+- Point 1
+- Point 2
+
+## Actions
+- [ ] À faire`;
+      addNote(currentWorkspaceId, 'Nouvelle Note', exampleContent);
     }
   };
 
