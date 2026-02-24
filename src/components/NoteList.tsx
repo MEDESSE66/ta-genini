@@ -42,7 +42,7 @@ Décrivez le contexte ici...
   };
 
   return (
-    <div className="w-80 border-r border-zinc-800 bg-zinc-900/50 flex flex-col h-full">
+    <div className="w-full md:w-80 border-r border-zinc-800 bg-zinc-900/50 flex flex-col h-full">
       <div className="p-4 border-b border-zinc-800 flex items-center justify-between">
         <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wider">Notes</h2>
         <button

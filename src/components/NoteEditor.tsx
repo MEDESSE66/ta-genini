@@ -6,16 +6,20 @@ import clsx from 'clsx';
 import { evaluateNote, calculateProgress } from '../utils/logicEngine';
 import { MindMap } from './MindMap';
 
+import { ArrowLeft } from 'lucide-react';
+
 interface NoteEditorProps {
   noteId: string | null;
+  onBack?: () => void;
 }
 
-export function NoteEditor({ noteId }: NoteEditorProps) {
+export function NoteEditor({ noteId, onBack }: NoteEditorProps) {
   const { notes, updateNote, archiveNote, deleteNote } = useStore();
   const note = notes.find((n) => n.id === noteId);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [examples, setExamples] = useState<string[]>([]);
+  const [showExamples, setShowExamples] = useState(true);
   const [viewMode, setViewMode] = useState<'edit' | 'preview' | 'map'>('edit');
   const [logicMessages, setLogicMessages] = useState<string[]>([]);
   const [progress, setProgress] = useState(0);
@@ -71,8 +75,14 @@ export function NoteEditor({ noteId }: NoteEditorProps) {
   return (
     <div className="flex-1 flex flex-col h-full bg-zinc-950">
       <div className="border-b border-zinc-800 p-4 flex items-center justify-between bg-zinc-900/30">
-        <div className="flex-1 mr-4">
-            <input
+        <div className="flex-1 mr-4 flex items-center gap-2">
+            {onBack && (
+                <button onClick={onBack} className="md:hidden p-2 -ml-2 text-zinc-400 hover:text-zinc-100">
+                    <ArrowLeft size={20} />
+                </button>
+            )}
+            <div className="flex-1">
+                <input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
@@ -93,6 +103,7 @@ export function NoteEditor({ noteId }: NoteEditorProps) {
                 </span>
                 <div className="h-1 w-24 bg-zinc-800 rounded-full overflow-hidden">
                     <div className="h-full bg-indigo-500 transition-all duration-500" style={{ width: `${progress}%` }} />
+                </div>
                 </div>
             </div>
         </div>
@@ -152,42 +163,55 @@ export function NoteEditor({ noteId }: NoteEditorProps) {
                         lang="fr"
                     />
                     
-                    <div className="p-8 pt-0 border-t border-zinc-800/50 mt-8">
+                    <div className="p-4 md:p-8 pt-0 border-t border-zinc-800/50 mt-8">
                         <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-sm font-bold text-zinc-400 uppercase tracking-wider">Exemples Concrets</h3>
                             <button 
-                                onClick={addExample}
-                                className="text-xs flex items-center gap-1 text-indigo-400 hover:text-indigo-300 transition-colors"
+                                onClick={() => setShowExamples(!showExamples)}
+                                className="text-sm font-bold text-zinc-400 uppercase tracking-wider flex items-center gap-2 hover:text-zinc-200 transition-colors"
                             >
-                                <Plus size={14} />
-                                Ajouter un exemple
+                                <span>Exemples Concrets ({examples.length})</span>
+                                <span className={clsx("transition-transform", showExamples ? "rotate-180" : "")}>
+                                    ▼
+                                </span>
                             </button>
-                        </div>
-                        
-                        <div className="space-y-4">
-                            {examples.map((ex, idx) => (
-                                <div key={idx} className="flex gap-2 items-start group">
-                                    <span className="text-zinc-600 font-mono text-sm mt-2">#{idx + 1}</span>
-                                    <textarea
-                                        value={ex}
-                                        onChange={(e) => updateExample(idx, e.target.value)}
-                                        className="flex-1 bg-zinc-900/50 border border-zinc-800 rounded p-3 text-zinc-300 text-sm focus:outline-none focus:border-indigo-500/50 min-h-[80px]"
-                                        placeholder="Décrivez un cas concret..."
-                                    />
-                                    <button 
-                                        onClick={() => removeExample(idx)}
-                                        className="text-zinc-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity mt-2"
-                                    >
-                                        <X size={16} />
-                                    </button>
-                                </div>
-                            ))}
-                            {examples.length === 0 && (
-                                <div className="text-zinc-700 text-sm italic border border-dashed border-zinc-800 rounded p-4 text-center">
-                                    Aucun exemple ajouté. Cliquez sur "Ajouter un exemple" pour illustrer votre note.
-                                </div>
+                            {showExamples && (
+                                <button 
+                                    onClick={addExample}
+                                    className="text-xs flex items-center gap-1 text-indigo-400 hover:text-indigo-300 transition-colors bg-indigo-900/20 px-3 py-1.5 rounded-full border border-indigo-500/30"
+                                >
+                                    <Plus size={14} />
+                                    Ajouter
+                                </button>
                             )}
                         </div>
+                        
+                        {showExamples && (
+                            <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-200">
+                                {examples.map((ex, idx) => (
+                                    <div key={idx} className="flex gap-3 items-start group bg-zinc-900/30 p-3 rounded-lg border border-zinc-800/50 hover:border-zinc-700 transition-colors">
+                                        <span className="text-zinc-500 font-mono text-xs mt-2 bg-zinc-800 px-1.5 py-0.5 rounded">#{idx + 1}</span>
+                                        <textarea
+                                            value={ex}
+                                            onChange={(e) => updateExample(idx, e.target.value)}
+                                            className="flex-1 bg-transparent text-zinc-300 text-sm focus:outline-none min-h-[60px] resize-y placeholder-zinc-600"
+                                            placeholder={`Décrivez l'exemple #${idx + 1}...`}
+                                        />
+                                        <button 
+                                            onClick={() => removeExample(idx)}
+                                            className="text-zinc-600 hover:text-red-400 p-1 rounded hover:bg-red-900/10 transition-colors"
+                                            title="Supprimer l'exemple"
+                                        >
+                                            <X size={16} />
+                                        </button>
+                                    </div>
+                                ))}
+                                {examples.length === 0 && (
+                                    <div className="text-zinc-600 text-sm italic border border-dashed border-zinc-800 rounded-lg p-6 text-center bg-zinc-900/20">
+                                        Aucun exemple pour le moment. Ajoutez-en un pour illustrer votre idée.
+                                    </div>
+                                )}
+                            </div>
+                        )}
                     </div>
                 </div>
             )}

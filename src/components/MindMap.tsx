@@ -2,7 +2,7 @@ import { ReactFlow, Background, Controls, Node, Edge, useNodesState, useEdgesSta
 import '@xyflow/react/dist/style.css';
 import { useCallback, useEffect, useState } from 'react';
 import { useStore } from '../store/useStore';
-import { Plus } from 'lucide-react';
+import { Plus, X } from 'lucide-react';
 
 interface MindMapProps {
   noteId: string;
@@ -113,38 +113,42 @@ export function MindMap({ noteId }: MindMapProps) {
       >
         <Background color="#27272a" gap={16} />
         <Controls className="bg-zinc-800 border-zinc-700 fill-zinc-400" />
-        <Panel position="top-right" className="bg-zinc-900 border border-zinc-800 p-2 rounded-lg shadow-xl">
+        <Panel position="bottom-center" className="bg-zinc-900/90 backdrop-blur border border-zinc-800 p-3 rounded-xl shadow-2xl mb-8 mx-4 max-w-md w-full flex flex-col gap-3">
             {!isAdding ? (
                 <button 
                     onClick={() => setIsAdding(true)}
-                    className="flex items-center gap-2 text-xs font-medium text-zinc-300 hover:text-white transition-colors"
+                    className="w-full flex items-center justify-center gap-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-500 py-2.5 rounded-lg transition-all shadow-lg shadow-indigo-900/20 active:scale-95"
                 >
-                    <Plus size={14} />
-                    Ajouter Note Liée
+                    <Plus size={18} />
+                    Nouvelle Note Liée
                 </button>
             ) : (
-                <div className="flex flex-col gap-2 w-48">
+                <div className="flex flex-col gap-3 w-full animate-in slide-in-from-bottom-2 duration-200">
+                    <div className="flex items-center justify-between text-xs text-zinc-400 uppercase font-bold tracking-wider px-1">
+                        <span>Lier à : {currentNote?.title.substring(0, 20)}...</span>
+                        <button onClick={() => setIsAdding(false)} className="hover:text-white"><X size={14} /></button>
+                    </div>
                     <input 
                         type="text" 
                         value={newNodeTitle}
                         onChange={(e) => setNewNodeTitle(e.target.value)}
-                        placeholder="Titre de la note..."
-                        className="bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-indigo-500"
+                        placeholder="Titre de la nouvelle note..."
+                        className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500 placeholder-zinc-500"
                         autoFocus
                         onKeyDown={(e) => e.key === 'Enter' && handleAddNode()}
                     />
                     <div className="flex gap-2 justify-end">
                         <button 
                             onClick={() => setIsAdding(false)}
-                            className="text-xs text-zinc-500 hover:text-zinc-300"
+                            className="flex-1 text-sm text-zinc-400 hover:text-zinc-200 bg-zinc-800 hover:bg-zinc-700 py-2 rounded-lg transition-colors"
                         >
                             Annuler
                         </button>
                         <button 
                             onClick={handleAddNode}
-                            className="text-xs bg-indigo-600 text-white px-2 py-1 rounded hover:bg-indigo-500"
+                            className="flex-1 text-sm bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-500 transition-colors font-medium shadow-lg shadow-indigo-900/20"
                         >
-                            Créer
+                            Créer & Lier
                         </button>
                     </div>
                 </div>
